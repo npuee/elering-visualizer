@@ -69,14 +69,31 @@ docker build -t energy-visualizer:latest .
 docker run -p 8889:8889 -v "$PWD/settings.json:/app/settings.json:ro" energy-visualizer
 ```
 
+
 ## Configuration
 
 Edit `settings.json` to set:
-- `auth_data` for Elering API (see Elering docs)
+- `auth_data` for Elering API (see below)
 - `cache_ttl` (seconds)
 - `server_port` and `host`
 - `eic_nicknames` for meter display names and colors
 
+### How to Get Elering API Credentials
+
+1. Go to [Estfeed Elering API Guide](https://estfeed.elering.ee/account-settings/efkp-api-guide)
+2. Log in with your account.
+3. Follow the instructions to create an API client:
+		- Register a new API client.
+		- Copy your `client_id` and `client_secret`.
+		- Set `grant_type` to `client_credentials`.
+4. Add these values to your `settings.json`:
+		```json
+		"auth_data": {
+			"client_id": "your_client_id",
+			"client_secret": "your_client_secret",
+			"grant_type": "client_credentials"
+		}
+		```
 
 Example:
 ```json
