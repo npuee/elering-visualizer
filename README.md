@@ -28,18 +28,24 @@ This will clear the cache and trigger a new data fetch on the next request.
 - Timestamp of last data fetch
 - Docker support
 
+
 ## Quick Start (Local)
 
 1. Install dependencies:
 	```bash
-		python3 -m pip install -r requirements.txt
-		```
+	python3 -m pip install -r requirements.txt
+	```
 2. Configure your settings in `settings.json` (see below).
-3. Run the server:
-		```bash
-		python3 app.py
-		# then open http://localhost:8889 (or the port in settings.json)
-		```
+3. Run the server with WSGI (Waitress):
+	```bash
+	python3 wsgi.py
+	# then open http://localhost:8889 (or the port in settings.json)
+	```
+   
+   Or for development only (not recommended for production):
+	```bash
+	python3 app.py
+	```
 
 
 ## Docker Usage
