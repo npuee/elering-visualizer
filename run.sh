@@ -24,9 +24,9 @@ else
 fi
 
 # Build Docker image
-docker build -t energy-visualizer .
+docker build -t elering-visualizer .
 
 # Run Docker container with WSGI (Waitress)
 # Remove any previous container with the same name
-docker rm -f energy-visualizer-run 2>/dev/null || true
-docker run -d --name energy-visualizer-run -p 8889:8889 -v "$PWD/settings.json:/app/settings.json:ro" energy-visualizer
+docker rm -f elering-visualizer-run 2>/dev/null || true
+docker run -d --name elering-visualizer-run -p 8889:8889 -v "$PWD/settings.json:/app/settings.json:ro" elering-visualizer
