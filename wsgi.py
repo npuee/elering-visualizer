@@ -13,6 +13,5 @@ if __name__ == "__main__":
     except Exception:
         _APP_SETTINGS = {}
     SERVER_PORT = int(_APP_SETTINGS.get('server_port', 8889))
-    SERVER_HOST = _APP_SETTINGS.get('host', '0.0.0.0')
-    print(f"Serving with Waitress on {SERVER_HOST}:{SERVER_PORT}")
-    serve(app.app, host=SERVER_HOST, port=SERVER_PORT)
+    print(f"Serving with Waitress on 0.0.0.0:{SERVER_PORT}")
+    serve(app.app, host='0.0.0.0', port=SERVER_PORT)

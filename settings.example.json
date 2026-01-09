@@ -6,7 +6,6 @@
   },
   "cache_ttl": 3600,
   "server_port": 8889,
-  "host": "0.0.0.0",
   "eic_nicknames": {
     "38ZEE-00261472-Y": { "nick": "Meter 1", "color": "#1f77b6" },
     "38ZEE-00475676-2": { "nick": "Meter 2", "color": "#b61f1f" },

@@ -5,28 +5,6 @@ This project is a Flask server and Plotly frontend for visualizing daily energy 
 
  ![Screenshot](https://raw.githubusercontent.com/npuee/energy-visualizer/refs/heads/master/docs/Screenshot.png)
 
-## Manually Refresh Data
-
-To force a fresh fetch from the API (bypassing the cache), open this URL in your browser or use curl:
-
-```
-http://localhost:8889/data?clear_cache=1
-```
-
-Or with curl:
-
-```bash
-curl "http://localhost:8889/data?clear_cache=1"
-```
-
-This will clear the cache and trigger a new data fetch on the next request.
-- Visualizes daily kWh per meter and total
-- Caching (1 hour, file-backed)
-- Configurable nicknames/colors for each EIC in `settings.json`
-- Legend and hover show nicknames
-- Timestamp of last data fetch
-- Docker support
-
 
 ## Quick Start (Local)
 
@@ -44,18 +22,14 @@ This will clear the cache and trigger a new data fetch on the next request.
 
 ## Docker Usage
 
-You can use the provided `run.sh` script to create a default `settings.json` (if missing), build the Docker image, and run the container:
+You can use the provided `run.sh` script to build the Docker image, and run the container:
 
 ```bash
 chmod +x run.sh
 ./run.sh
-
-
-
 ```
 
 This will:
-- Create a default `settings.json` if it does not exist (edit it with your real credentials!)
 - Build the Docker image
 - Run the container, mounting your `settings.json` for configuration
 
@@ -90,6 +64,22 @@ If you set `basic_auth_user` and `basic_auth_password` in your `settings.json`, 
 - If credentials are missing or incorrect, the server will respond with HTTP 401 Unauthorized.
 
 **Note:** If you do not set these fields, authentication is not required.
+
+## Manually Refresh Data
+
+To force a fresh fetch from the API (bypassing the cache), open this URL in your browser or use curl:
+
+```
+http://localhost:8889/data?clear_cache=1
+```
+
+Or with curl:
+
+```bash
+curl "http://localhost:8889/data?clear_cache=1"
+```
+
+This will clear the cache and trigger a new data fetch on the next request.
 
 ### How to Get Elering API Credentials
 

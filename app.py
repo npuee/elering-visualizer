@@ -28,7 +28,6 @@ except Exception:
     _APP_SETTINGS = {}
 
 SERVER_PORT = int(_APP_SETTINGS.get('server_port', 8889))
-SERVER_HOST = _APP_SETTINGS.get('host', '0.0.0.0')
 
 
 @app.route('/')
@@ -67,4 +66,4 @@ def data():
 
 
 if __name__ == '__main__':
-    app.run(host=SERVER_HOST, port=SERVER_PORT)
+    app.run(host='0.0.0.0', port=SERVER_PORT)
