@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Energy Daily Visualization</title>
+    <title id="page-title"></title>
+      <script src="/static/language.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.2.min.js"></script>
     <link rel="stylesheet" href="/static/custom.css" />
   </head>
@@ -24,7 +25,7 @@
 
         const traces = [];
         // Total as bar (colorful)
-        traces.push({ x: dates, y: total, type: 'bar', name: 'Total', marker: { color: '#2298b2', line: { color: '#17607a', width: 1 }, opacity: 0.95 } });
+        traces.push({ x: dates, y: total, type: 'bar', name: LANG.LEGEND_TOTAL, marker: { color: '#2298b2', line: { color: '#17607a', width: 1 }, opacity: 0.95 } });
 
         // Color palette with different dash/marker patterns
         const palette = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf'];
@@ -56,9 +57,9 @@
         });
 
         const layout = {
-          title: 'Daily consumption (kWh)',
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'kWh' },
+          title: LANG.PLOT_TITLE,
+          xaxis: { title: LANG.X_AXIS },
+          yaxis: { title: LANG.Y_AXIS },
           // place legend horizontally at the bottom to avoid overlapping labels
           legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.25 },
           margin: { b: 120 }
@@ -78,32 +79,35 @@
           d.innerHTML = `<strong>${title}</strong><div>${value}</div>`;
           summaryEl.appendChild(d);
         }
-        addCard('Total kWh', s.total_kwh);
-        addCard('Avg / day (kWh)', s.avg_per_day_kwh);
-        addCard('Min day (kWh)', s.min_day_kwh);
-        addCard('Max day (kWh)', s.max_day_kwh);
-        addCard('Today (kWh)', s.today_kwh);
+        addCard(LANG.SUMMARY_TOTAL, s.total_kwh);
+        addCard(LANG.SUMMARY_AVG, s.avg_per_day_kwh);
+        addCard(LANG.SUMMARY_MIN, s.min_day_kwh);
+        addCard(LANG.SUMMARY_MAX, s.max_day_kwh);
+        addCard(LANG.SUMMARY_TODAY, s.today_kwh);
         const fetchedEl = document.getElementById('fetched');
         if (data.fetched_at_ts) {
           // prefer epoch seconds to avoid ambiguous date parsing across browsers
           try {
             const d = new Date(Math.round(data.fetched_at_ts * 1000));
-            fetchedEl.textContent = 'Data updated: ' + d.toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZoneName: 'short' });
+            fetchedEl.textContent = LANG.DATA_UPDATED + ' ' + d.toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZoneName: 'short' });
           } catch (e) {
-            fetchedEl.textContent = 'Data updated: ' + data.fetched_at;
+            fetchedEl.textContent = LANG.DATA_UPDATED + ' ' + data.fetched_at;
           }
         } else if (data.fetched_at) {
           try {
             const d = new Date(data.fetched_at);
-            fetchedEl.textContent = 'Data updated: ' + d.toLocaleString(undefined, { timeZoneName: 'short' });
+            fetchedEl.textContent = LANG.DATA_UPDATED + ' ' + d.toLocaleString(undefined, { timeZoneName: 'short' });
           } catch (e) {
-            fetchedEl.textContent = 'Data updated: ' + data.fetched_at;
+            fetchedEl.textContent = LANG.DATA_UPDATED + ' ' + data.fetched_at;
           }
         } else {
           fetchedEl.textContent = '';
         }
       }
 
+      // Set static text from language file
+      document.getElementById('page-title').textContent = LANG.TITLE;
+      document.title = LANG.TITLE;
       (async ()=>{
         const data = await getData();
         render(data);

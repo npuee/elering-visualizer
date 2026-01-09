@@ -172,10 +172,10 @@ def transform(data):
     }
 
     return {
+        'summary': summary,
         'dates': dates,
         'series': series_out,
         'total': total_values,
-        'summary': summary,
     }
 
 

@@ -1,3 +1,5 @@
+## 2026-01-09 (Docs)
+- Updated the documentation comment in static/language.js to reflect new multi-language structure and usage instructions.
 # Changelog
 
 
@@ -6,6 +8,11 @@
 - Added settings.example.json as a template for configuration.
 - Anonymized EIC nicknames in settings.example.json for safe sharing.
 - run.sh now exits with an error if settings.json does not exist, instead of creating a default file.
+
+## 2026-01-09 (UI/Language)
+- Refactored static text in index.html to use a language.js file for all UI strings.
+- Added Estonian language support (LANGUAGES.et) in language.js.
+- Made language switching user-friendly: use setLanguage('en') or setLanguage('et') and getLang() for current language.
 
 ## 2026-01-09
 - Switched Docker base image to python:3.11-alpine, reducing image size from 169MB to 66MB.
