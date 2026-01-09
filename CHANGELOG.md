@@ -3,11 +3,14 @@
 # Changelog
 
 
-## [Unreleased]
+
+## 2026-01-09 (Maintenance)
 - General improvements and bugfixes.
 - Added settings.example.json as a template for configuration.
 - Anonymized EIC nicknames in settings.example.json for safe sharing.
 - run.sh now exits with an error if settings.json does not exist, instead of creating a default file.
+
+## [Unreleased]
 
 ## 2026-01-09 (UI/Language)
 - Refactored static text in index.html to use a language.js file for all UI strings.
