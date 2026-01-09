@@ -17,9 +17,9 @@ RUN apk add --no-cache gcc musl-dev libffi-dev \
     && apk del gcc musl-dev libffi-dev \
     && rm -rf /root/.cache /root/.pip /tmp/*
 
+
 COPY app.py ./
 COPY energy.py ./
-
 COPY templates/ ./templates/
 COPY static/ ./static/
 COPY entrypoint.sh ./
