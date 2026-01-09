@@ -1,26 +1,11 @@
 #!/bin/bash
 set -e
 
-# Create settings.json if it does not exist
+
+# Require settings.json to exist
 if [ ! -f settings.json ]; then
-  cat > settings.json <<EOF
-{
-  "auth_data": {
-    "client_id": "your_client_id",
-    "client_secret": "your_client_secret",
-    "grant_type": "client_credentials"
-  },
-  "cache_ttl": 3600,
-  "server_port": 8889,
-  "host": "0.0.0.0",
-  "eic_nicknames": {
-    "38ZEE-00261472-Y": { "nick": "Shortname.", "color": "#1f77b6" }
-  }
-}
-EOF
-  echo "Created default settings.json. Please edit it with your credentials."
-else
-  echo "settings.json already exists."
+  echo "ERROR: settings.json not found. Please copy settings.example.json and edit it with your credentials."
+  exit 1
 fi
 
 
