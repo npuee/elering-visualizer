@@ -9,7 +9,6 @@ fi
 
 # Print environment info for debugging
 python --version
-pip --version
 
 # Check required environment variables
 if [ -z "$AUTH_CLIENT_ID" ] || [ -z "$AUTH_CLIENT_SECRET" ]; then
