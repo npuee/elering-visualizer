@@ -1,112 +1,124 @@
-import requests
-import json
+
+"""
+energy.py: Efficient energy data fetch, cache, and transformation for visualization.
+Optimized for clarity, maintainability, and performance.
+"""
+
 import os
+import json
 import time
+from typing import Any, Dict, List, Tuple, Optional
 from collections import defaultdict
 from datetime import datetime, timezone
+import requests
 
 BASE_DIR = os.path.dirname(__file__)
+SETTINGS_FILE = os.path.join(BASE_DIR, 'settings.json')
 CACHE_FILE = os.path.join(BASE_DIR, 'api_cache.json')
 
-# load settings if available
-SETTINGS_FILE = os.path.join(BASE_DIR, 'settings.json')
-_SETTINGS = {}
-try:
-    with open(SETTINGS_FILE, 'r') as sf:
-        _SETTINGS = json.load(sf)
-except Exception:
-    _SETTINGS = {}
-
-
-# load settings
-CACHE_TTL = int(_SETTINGS.get('cache_ttl', 3600))  # seconds
-EIC_NICKNAMES = _SETTINGS.get('eic_nicknames', {})
-auth_data = _SETTINGS.get('auth_data')
-
-# Elering endpoints
-elering_api_token_url = "https://kc.elering.ee/realms/elering-sso/protocol/openid-connect/token"
-elering_api_url = "https://estfeed.elering.ee/api/public/v1/metering-data"
-
-def fetch_remote_data():
-    ts = time.time()
-    # try returning a fresh cache first
+def load_settings() -> Dict[str, Any]:
+    """Load settings from settings.json, return empty dict on failure."""
     try:
-        if os.path.exists(CACHE_FILE):
+        with open(SETTINGS_FILE, 'r') as sf:
+            return json.load(sf)
+    except Exception:
+        return {}
+
+_SETTINGS = load_settings()
+CACHE_TTL: int = int(_SETTINGS.get('cache_ttl', 3600))
+EIC_NICKNAMES: Dict[str, Any] = _SETTINGS.get('eic_nicknames', {})
+AUTH_DATA = _SETTINGS.get('auth_data')
+ELERING_API_TOKEN_URL = _SETTINGS.get('elering_api_token_url', "https://kc.elering.ee/realms/elering-sso/protocol/openid-connect/token")
+ELERING_API_URL = _SETTINGS.get('elering_api_url', "https://estfeed.elering.ee/api/public/v1/metering-data")
+
+def fetch_remote_data() -> Tuple[Optional[Any], Optional[float]]:
+    """
+    Fetch data from cache or remote API. Returns (data, timestamp).
+    Uses cache if fresh, otherwise fetches and updates cache.
+    """
+    ts = time.time()
+    # Try cache first
+    if os.path.exists(CACHE_FILE):
+        try:
             with open(CACHE_FILE, 'r') as cf:
                 cached = json.load(cf)
             cached_ts = cached.get('_cached_at', 0)
             if ts - cached_ts < CACHE_TTL:
                 return cached.get('data'), cached_ts
-    except Exception as e:
-        print('Warning reading cache:', e)
+        except Exception as e:
+            print('Warning reading cache:', e)
 
-    # fetch from remote
+    # Fetch from remote
     try:
-        # If auth_data provided, call Elering API with token and params
-        if auth_data:
-            # obtain token
-            token_url = _SETTINGS.get('elering_api_token_url', elering_api_token_url)
-            try:
-                token_resp = requests.post(token_url, data=auth_data, headers={'Content-Type': 'application/x-www-form-urlencoded'}, timeout=10)
-                token_resp.raise_for_status()
-                token = token_resp.json().get('access_token')
-            except Exception as e:
-                print('Failed to get auth token:', e)
-                raise
-
+        if AUTH_DATA:
+            # Obtain token
+            token_resp = requests.post(
+                ELERING_API_TOKEN_URL,
+                data=AUTH_DATA,
+                headers={'Content-Type': 'application/x-www-form-urlencoded'},
+                timeout=10
+            )
+            token_resp.raise_for_status()
+            token = token_resp.json().get('access_token')
             headers = {'Authorization': f'Bearer {token}'}
             now_dt = datetime.now(timezone.utc)
             start_of_month = now_dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            start_iso = start_of_month.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-            end_iso = now_dt.strftime('%Y-%m-%dT%H:%M:%S.000Z')
             params = {
-                'startDateTime': start_iso,
-                'endDateTime': end_iso,
+                'startDateTime': start_of_month.strftime('%Y-%m-%dT%H:%M:%S.000Z'),
+                'endDateTime': now_dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'),
                 'resolution': 'one_day'
             }
-            resp = requests.get(elering_api_url, params=params, headers=headers, timeout=30)
+            resp = requests.get(ELERING_API_URL, params=params, headers=headers, timeout=30)
+            resp.raise_for_status()
+            data = resp.json()
+        else:
+            raise RuntimeError('No auth_data in settings.json')
 
-        resp.raise_for_status()
-        data = resp.json()
-        # write cache atomically
-        try:
-            tmp = CACHE_FILE + '.tmp'
-            with open(tmp, 'w') as cf:
-                json.dump({'_cached_at': ts, 'data': data}, cf)
-                cf.flush()
-                try:
-                    os.fsync(cf.fileno())
-                except Exception:
-                    pass
-            os.replace(tmp, CACHE_FILE)
-            print(f'Wrote cache to {CACHE_FILE}')
-        except Exception as e:
-            print(f'Warning: failed to write cache {CACHE_FILE}: {e}')
+        # Write cache atomically
+        tmp = CACHE_FILE + '.tmp'
+        with open(tmp, 'w') as cf:
+            json.dump({'_cached_at': ts, 'data': data}, cf)
+            cf.flush()
+            try:
+                os.fsync(cf.fileno())
+            except Exception:
+                pass
+        os.replace(tmp, CACHE_FILE)
+        print(f'Wrote cache to {CACHE_FILE}')
         return data, ts
     except Exception as e:
         print('Fetch error:', e)
-        # on fetch error, try returning any cached data even if stale
-        try:
-            if os.path.exists(CACHE_FILE):
+        # On fetch error, try returning any cached data even if stale
+        if os.path.exists(CACHE_FILE):
+            try:
                 with open(CACHE_FILE, 'r') as cf:
                     cached = json.load(cf)
                 return cached.get('data'), cached.get('_cached_at', None)
-        except Exception as e2:
-            print('Failed to read stale cache:', e2)
-    return None, None
+            except Exception as e2:
+                print('Failed to read stale cache:', e2)
+        return None, None
 
-
-def load_data():
-    # Prefer remote data (cached or fresh). If nothing available, return empty dataset.
+def load_data() -> Tuple[Any, float]:
+    """Return (data, timestamp). If no data, returns empty list and current time."""
     data, ts = fetch_remote_data()
     if data:
         return data, ts
-    # no remote data and no cache -> return empty dataset and current time
     return [], time.time()
 
+def _match_eic(label: str) -> Tuple[str, Optional[str]]:
+    """Return (display, color) for a given EIC label using EIC_NICKNAMES."""
+    for eic_key, eic_val in EIC_NICKNAMES.items():
+        nick = eic_val['nick'] if isinstance(eic_val, dict) else eic_val
+        color = eic_val.get('color') if isinstance(eic_val, dict) else None
+        if (eic_key and eic_key in label) or (nick and nick in label):
+            return nick or label, color
+    return label, None
 
-def transform(data):
-    # Build per-meter series and aggregate totals by date
+def transform(data: Any) -> Dict[str, Any]:
+    """
+    Transform raw API data into structure for visualization.
+    Returns dict with summary, dates, series, and total.
+    """
     series = []
     totals_by_date = defaultdict(float)
     dates_set = set()
@@ -122,43 +134,26 @@ def transform(data):
             per_date[date] = val
             totals_by_date[date] += val
             dates_set.add(date)
-        # try to match EIC nickname and color
-        display = label
-        color = None
-        # EIC_NICKNAMES may map eic -> {nick, color} or eic -> nick string
-        for eic_key, eic_val in EIC_NICKNAMES.items():
-            try:
-                nick = eic_val['nick'] if isinstance(eic_val, dict) else eic_val
-            except Exception:
-                nick = eic_val
-            if eic_key and eic_key in label:
-                display = nick or label
-                color = eic_val.get('color') if isinstance(eic_val, dict) else None
-                break
-            if nick and nick in label:
-                display = nick
-                color = eic_val.get('color') if isinstance(eic_val, dict) else None
-                break
-
+        display, color = _match_eic(label)
         series.append({'label': label, 'display': display, 'color': color, 'per_date': per_date})
 
-    dates = sorted(list(dates_set))
-    series_out = []
-    for s in series:
-        values = [s['per_date'].get(d, 0.0) for d in dates]
-        series_out.append({'label': s['label'], 'display': s.get('display'), 'color': s.get('color'), 'values': values})
-
+    dates = sorted(dates_set)
+    series_out = [
+        {
+            'label': s['label'],
+            'display': s['display'],
+            'color': s['color'],
+            'values': [s['per_date'].get(d, 0.0) for d in dates]
+        }
+        for s in series
+    ]
     total_values = [totals_by_date.get(d, 0.0) for d in dates]
 
     overall_total = sum(total_values)
     avg_per_day = overall_total / len(dates) if dates else 0
-
     today_str = datetime.now().strftime('%Y-%m-%d')
-    today_idx = None
-    if today_str in dates:
-        today_idx = dates.index(today_str)
-    # Exclude today from min calculation if present
-    min_candidates = [v for i, v in enumerate(total_values) if i != today_idx]
+    today_idx = dates.index(today_str) if today_str in dates else None
+    min_candidates = [v for i, v in enumerate(total_values) if i != today_idx] if today_idx is not None else total_values
     min_day_kwh = round(min(min_candidates), 3) if min_candidates else 0
     max_day_kwh = round(max(total_values), 3) if total_values else 0
     today_kwh = total_values[today_idx] if today_idx is not None else None
@@ -178,8 +173,8 @@ def transform(data):
         'total': total_values,
     }
 
-
-def clear_cache():
+def clear_cache() -> bool:
+    """Delete the cache file if it exists. Returns True if deleted."""
     try:
         if os.path.exists(CACHE_FILE):
             os.remove(CACHE_FILE)

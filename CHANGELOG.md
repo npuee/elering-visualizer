@@ -10,7 +10,13 @@
 - Anonymized EIC nicknames in settings.example.json for safe sharing.
 - run.sh now exits with an error if settings.json does not exist, instead of creating a default file.
 
+
 ## [Unreleased]
+- Fully optimized rewrite of energy.py:
+	- Improved settings and cache handling (single load, robust error handling)
+	- Simplified EIC nickname/color matching logic
+	- Added type hints and docstrings for maintainability
+	- Modular, efficient, and easier to extend
 
 ## 2026-01-09 (UI/Language)
 - Refactored static text in index.html to use a language.js file for all UI strings.
