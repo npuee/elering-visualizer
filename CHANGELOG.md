@@ -1,7 +1,10 @@
 # Changelog
 
+
 ## [Unreleased]
 - General improvements and bugfixes.
+- Added settings.example.json as a template for configuration.
+- Anonymized EIC nicknames in settings.example.json for safe sharing.
 
 ## 2026-01-09
 - Switched Docker base image to python:3.11-alpine, reducing image size from 169MB to 66MB.
