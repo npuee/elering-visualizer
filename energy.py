@@ -179,16 +179,16 @@ def transform(data: Any) -> Dict[str, Any]:
     today_str = datetime.now().strftime('%Y-%m-%d')
     today_idx = dates.index(today_str) if today_str in dates else None
     min_candidates = [v for i, v in enumerate(total_values) if i != today_idx] if today_idx is not None else total_values
-    min_day_kwh = round(min(min_candidates), 3) if min_candidates else 0
-    max_day_kwh = round(max(total_values), 3) if total_values else 0
+    min_day_kwh = round(min(min_candidates), 2) if min_candidates else 0
+    max_day_kwh = round(max(total_values), 2) if total_values else 0
     today_kwh = total_values[today_idx] if today_idx is not None else None
 
     summary = {
-        'total_kwh': round(overall_total, 3),
-        'avg_per_day_kwh': round(avg_per_day, 3),
+        'total_kwh': round(overall_total, 2),
+        'avg_per_day_kwh': round(avg_per_day, 2),
         'min_day_kwh': min_day_kwh,
         'max_day_kwh': max_day_kwh,
-        'today_kwh': round(today_kwh, 3) if today_kwh is not None else None
+        'today_kwh': round(today_kwh, 2) if today_kwh is not None else None
     }
 
     return {

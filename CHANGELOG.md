@@ -2,6 +2,7 @@
 # Changelog
 
 ## 2026-01-09
+- Summary values (total, average, min, max, today) now use 2 digits after the decimal point instead of 3.
 - HTTP Basic Auth documented in README.md and added to settings.example.json
 - Fully optimized rewrite of energy.py (settings/cache handling, EIC matching, type hints, docs, modularity)
 - Refactored static text in index.html to use a language.js file for all UI strings
