@@ -3,9 +3,10 @@
 
 This project is a Flask server and Plotly frontend for visualizing daily energy consumption from the Estfeed/Elering API. It supports caching, nicknames/colors for meters, and a modern UI.
 
-- ![Screenshot](https://raw.githubusercontent.com/npuee/energy-visualizer/refs/heads/master/docs/Screenshot.png)
+ ![Screenshot](https://raw.githubusercontent.com/npuee/energy-visualizer/refs/heads/master/docs/Screenshot.png)
 
 ## Features
+* Optional HTTP Basic Auth (set `basic_auth_user` and `basic_auth_password` in `settings.json`)
 ## Manually Refresh Data
 
 To force a fresh fetch from the API (bypassing the cache), open this URL in your browser or use curl:
@@ -41,6 +42,10 @@ This will clear the cache and trigger a new data fetch on the next request.
 	python3 wsgi.py
 	# then open http://localhost:8889 (or the port in settings.json)
 	```
+   ```json
+   "basic_auth_user": "admin",
+   "basic_auth_password": "changeme"
+   ```
    
    Or for development only (not recommended for production):
 	```bash
@@ -55,6 +60,8 @@ You can use the provided `run.sh` script to create a default `settings.json` (if
 ```bash
 chmod +x run.sh
 ./run.sh
+If `basic_auth_user` and `basic_auth_password` are set in `settings.json`, all endpoints will require HTTP Basic Auth. Use any HTTP client or browser and enter the username and password you set.
+
 ```
 
 This will:

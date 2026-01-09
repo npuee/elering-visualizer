@@ -1,6 +1,8 @@
 
 # Changelog
+
 ## [Unreleased]
+- Documented HTTP Basic Auth in README.md and added example fields to settings.example.json.
 
 ## 2026-01-09
 - Major refactor and improvements:
