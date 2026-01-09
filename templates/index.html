@@ -4,14 +4,34 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title id="page-title"></title>
-      <script src="/static/language.js"></script>
+    <script src="/static/language.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/custom.css" />
   </head>
   <body>
-    <div id="chart"></div>
-    <div class="summary" id="summary"></div>
-    <div id="fetched" style="margin-top:8px; color:#666; font-size:0.9em"></div>
+    <div class="container py-4">
+      <div class="row mb-4">
+        <div class="col-12">
+          <h1 class="mb-3 text-center" id="page-title"></h1>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-12">
+          <div id="chart" class="border rounded shadow-sm"></div>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex flex-row flex-wrap justify-content-center gap-3" id="summary"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-end">
+          <div id="fetched" class="text-muted small"></div>
+        </div>
+      </div>
+    </div>
 
     <script>
       async function getData() {
@@ -61,7 +81,13 @@
           xaxis: { title: LANG.X_AXIS },
           yaxis: { title: LANG.Y_AXIS },
           // place legend horizontally at the bottom to avoid overlapping labels
-          legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.25 },
+          legend: {
+            orientation: 'h',
+            x: 0.5,
+            xanchor: 'center',
+            y: -0.25,
+            font: { size: 14 }
+          },
           margin: { b: 120 }
         };
 
@@ -74,16 +100,19 @@
         const s = data.summary || {};
         const summaryEl = document.getElementById('summary');
         summaryEl.innerHTML = '';
-        const addCard = (title, value) => {
-          const d = document.createElement('div'); d.className='card';
-          d.innerHTML = `<strong>${title}</strong><div>${value}</div>`;
-          summaryEl.appendChild(d);
-        }
-        addCard(LANG.SUMMARY_TOTAL, s.total_kwh);
-        addCard(LANG.SUMMARY_AVG, s.avg_per_day_kwh);
-        addCard(LANG.SUMMARY_MIN, s.min_day_kwh);
-        addCard(LANG.SUMMARY_MAX, s.max_day_kwh);
-        addCard(LANG.SUMMARY_TODAY, s.today_kwh);
+        const items = [
+          { label: LANG.SUMMARY_TOTAL, value: s.total_kwh },
+          { label: LANG.SUMMARY_AVG, value: s.avg_per_day_kwh },
+          { label: LANG.SUMMARY_MIN, value: s.min_day_kwh },
+          { label: LANG.SUMMARY_MAX, value: s.max_day_kwh },
+          { label: LANG.SUMMARY_TODAY, value: s.today_kwh }
+        ];
+        items.forEach(item => {
+          const col = document.createElement('div');
+          col.className = 'col-auto md-3 d-flex flex-row flex-wrap';
+          col.innerHTML = `<div class="card h-100 shadow-sm md-3"><div class="card-body text-center"><h6 class="card-title">${item.label}</h6><div class="card-text fs-4">${item.value}</div></div></div>`;
+          summaryEl.appendChild(col);
+        });
         const fetchedEl = document.getElementById('fetched');
         if (data.fetched_at_ts) {
           // prefer epoch seconds to avoid ambiguous date parsing across browsers

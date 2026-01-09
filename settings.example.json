@@ -1,8 +1,7 @@
 {
   "auth_data": {
     "client_id": "your_client_id",
-    "client_secret": "your_client_secret",
-    "grant_type": "client_credentials"
+    "client_secret": "your_client_secret"
   },
   "cache_ttl": 3600,
   "server_port": 8889,

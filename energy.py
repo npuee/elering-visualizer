@@ -52,21 +52,7 @@ def load_settings() -> Dict[str, Any]:
 _SETTINGS = load_settings()
 CACHE_TTL: int = int(_SETTINGS.get('cache_ttl', 3600))
 EIC_NICKNAMES: Dict[str, Any] = _SETTINGS.get('eic_nicknames', {})
-
-# AUTH_DATA now loaded from environment variables
-def get_auth_data_from_env() -> Optional[dict]:
-    client_id = os.environ.get('AUTH_CLIENT_ID')
-    client_secret = os.environ.get('AUTH_CLIENT_SECRET')
-    audience = os.environ.get('AUTH_AUDIENCE')
-    if client_id and client_secret and audience:
-        return {
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'audience': audience
-        }
-    return None
-
-AUTH_DATA = get_auth_data_from_env()
+AUTH_DATA = _SETTINGS.get('auth_data')
 ELERING_API_TOKEN_URL = _SETTINGS.get('elering_api_token_url', "https://kc.elering.ee/realms/elering-sso/protocol/openid-connect/token")
 ELERING_API_URL = _SETTINGS.get('elering_api_url', "https://estfeed.elering.ee/api/public/v1/metering-data")
 
