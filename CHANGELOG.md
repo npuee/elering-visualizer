@@ -1,10 +1,8 @@
 
 # Changelog
 
-- Summary values (total, average, min, max, today) now use 2 digits after the decimal point instead of 3.
 ## 2026-01-09
 - Added a dedicated 'HTTP Basic Authentication' section to the README for clarity and usage instructions.
-- Summary values (total, average, min, max, today) now use 2 digits after the decimal point instead of 3.
 - Summary values (total, average, min, max, today) now use 2 digits after the decimal point instead of 3.
 - HTTP Basic Auth documented in README.md and added to settings.example.json
 - Fully optimized rewrite of energy.py (settings/cache handling, EIC matching, type hints, docs, modularity)
@@ -15,14 +13,11 @@
 - Added settings.example.json as a template for configuration
 - Anonymized EIC nicknames in settings.example.json for safe sharing
 - run.sh now exits with an error if settings.json does not exist, instead of creating a default file
-- Switched Docker base image to python:3.11-alpine (reducing image size from 169MB to 66MB)
-- Aggressively slimmed Docker image with multi-stage build and removal of build dependencies
+- Aggressively slimmed Docker image with multi-stage build and removal of build dependencies (reducing image size from 169MB to 66MB)
 - Only copy required files into Docker image for security and size
 - Added multi-arch build.sh script (local build only, no push)
 - run.sh now deletes old image before building, tags as :latest, and uses --restart always
-- run.sh and Dockerfile now default to WSGI (Waitress) for production
 - All template CSS moved to static/custom.css
-- UI: 'Data fetched' changed to 'Data updated', right-aligned, and reduced top margin
 - Plotly controls (zoom, screenshot, etc.) removed from chart
 - Today's value excluded from min calculation in summary (shown as today_kwh)
 - README: added screenshot, API credential instructions, and manual refresh info
