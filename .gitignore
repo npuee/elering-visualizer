@@ -74,3 +74,4 @@ venv.bak/
 settings.json
 api_cache.json
 response.json
+build.sh

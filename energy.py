@@ -152,11 +152,23 @@ def transform(data):
 
     overall_total = sum(total_values)
     avg_per_day = overall_total / len(dates) if dates else 0
+
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    today_idx = None
+    if today_str in dates:
+        today_idx = dates.index(today_str)
+    # Exclude today from min calculation if present
+    min_candidates = [v for i, v in enumerate(total_values) if i != today_idx]
+    min_day_kwh = round(min(min_candidates), 3) if min_candidates else 0
+    max_day_kwh = round(max(total_values), 3) if total_values else 0
+    today_kwh = total_values[today_idx] if today_idx is not None else None
+
     summary = {
         'total_kwh': round(overall_total, 3),
         'avg_per_day_kwh': round(avg_per_day, 3),
-        'min_day_kwh': round(min(total_values), 3) if total_values else 0,
-        'max_day_kwh': round(max(total_values), 3) if total_values else 0
+        'min_day_kwh': min_day_kwh,
+        'max_day_kwh': max_day_kwh,
+        'today_kwh': round(today_kwh, 3) if today_kwh is not None else None
     }
 
     return {
