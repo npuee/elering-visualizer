@@ -5,8 +5,6 @@ This project is a Flask server and Plotly frontend for visualizing daily energy 
 
  ![Screenshot](https://raw.githubusercontent.com/npuee/energy-visualizer/refs/heads/master/docs/Screenshot.png)
 
-## Features
-* Optional HTTP Basic Auth (set `basic_auth_user` and `basic_auth_password` in `settings.json`)
 ## Manually Refresh Data
 
 To force a fresh fetch from the API (bypassing the cache), open this URL in your browser or use curl:
@@ -42,15 +40,6 @@ This will clear the cache and trigger a new data fetch on the next request.
 	python3 wsgi.py
 	# then open http://localhost:8889 (or the port in settings.json)
 	```
-   ```json
-   "basic_auth_user": "admin",
-   "basic_auth_password": "changeme"
-   ```
-   
-   Or for development only (not recommended for production):
-	```bash
-	python3 app.py
-	```
 
 
 ## Docker Usage
@@ -61,19 +50,7 @@ You can use the provided `run.sh` script to create a default `settings.json` (if
 chmod +x run.sh
 ./run.sh
 
-## HTTP Basic Authentication
 
-If you set `basic_auth_user` and `basic_auth_password` in your `settings.json`, all endpoints will require HTTP Basic Auth.
-
-- Most browsers and API clients (curl, Postman, etc.) will prompt for a username and password.
-- Use the values you set in `settings.json`.
-- Example curl usage:
-	```bash
-	curl -u admin:changeme http://localhost:8889/
-	```
-- If credentials are missing or incorrect, the server will respond with HTTP 401 Unauthorized.
-
-**Note:** If you do not set these fields, authentication is not required.
 
 ```
 
@@ -92,11 +69,27 @@ docker run -p 8889:8889 -v "$PWD/settings.json:/app/settings.json:ro" energy-vis
 
 ## Configuration
 
+
 Edit `settings.json` to set:
 - `auth_data` for Elering API (see below)
 - `cache_ttl` (seconds)
 - `server_port` (server always listens on 0.0.0.0)
 - `eic_nicknames` for meter display names and colors
+- `basic_auth_user` and `basic_auth_password` (optional, enables HTTP Basic Auth for all endpoints)
+
+### HTTP Basic Authentication
+
+If you set `basic_auth_user` and `basic_auth_password` in your `settings.json`, all endpoints will require HTTP Basic Auth.
+
+- Most browsers and API clients (curl, Postman, etc.) will prompt for a username and password.
+- Use the values you set in `settings.json`.
+- Example curl usage:
+	```bash
+	curl -u admin:changeme http://localhost:8889/
+	```
+- If credentials are missing or incorrect, the server will respond with HTTP 401 Unauthorized.
+
+**Note:** If you do not set these fields, authentication is not required.
 
 ### How to Get Elering API Credentials
 
