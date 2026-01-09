@@ -2,6 +2,7 @@
 - Added entrypoint.sh for container startup and Waitress server management
 - Dockerfile now uses entrypoint.sh as ENTRYPOINT and removes wsgi.py
 - entrypoint.sh checks for required environment variables and creates default settings.json if missing
+- Switched Bootstrap and Plotly dependencies in index.html to use local static files instead of CDN links
 
 
 # Changelog
