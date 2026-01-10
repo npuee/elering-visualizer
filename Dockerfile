@@ -19,8 +19,6 @@ RUN apk add --no-cache gcc musl-dev libffi-dev \
 
 
 COPY app/ .
-COPY templates/ ./templates/
-COPY static/ ./static/
 COPY scripts/entrypoint.sh ./scripts/entrypoint.sh
 
 FROM python:3.11-alpine
@@ -34,8 +32,6 @@ RUN rm -rf /usr/share/doc /usr/share/man /usr/share/locale || true
 COPY --from=builder /install /usr/local
 
 COPY app/ .
-COPY templates/ ./templates/
-COPY static/ ./static/
 COPY scripts/entrypoint.sh ./scripts/entrypoint.sh
 
 # Ensure entrypoint is executable
