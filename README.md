@@ -104,14 +104,12 @@ This will clear the cache and trigger a new data fetch on the next request.
 3. Follow the instructions to create an API client:
 		- Register a new API client.
 		- Copy your `client_id` and `client_secret`.
-		- Set `grant_type` to `client_credentials` (the API requires this when requesting a token).
 4. Store these credentials in your `.env` file (see `.env.example`) so they are loaded as environment variables by the application:
 	```env
 	AUTH_CLIENT_ID=your_client_id_here
 	AUTH_CLIENT_SECRET=your_client_secret_here
 	```
 
-The application reads `AUTH_CLIENT_ID` and `AUTH_CLIENT_SECRET` from the environment at runtime; do not place these secrets into `settings.json`.
 
 ## Security
 
