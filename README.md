@@ -16,11 +16,16 @@ This project is a Flask server and Plotly frontend for visualizing daily energy 
 3. Copy `.env.example` to `.env` and fill in your Elering API credentials:
 	- `AUTH_CLIENT_ID=your_client_id_here`
 	- `AUTH_CLIENT_SECRET=your_client_secret_here`
-3. Run the server with WSGI (Waitress):
-	```bash
-	python3 wsgi.py
-	# then open http://localhost:8889 (or the port in settings.json)
-	```
+3. Run the server:
+		- For production (recommended) run with Waitress:
+			```bash
+			python3 -m waitress --host=0.0.0.0 --port=8889 app:app
+			# then open http://localhost:8889 (or the port in settings.json)
+			```
+		- For development use the Flask dev server:
+			```bash
+			python3 app.py
+			```
 
 
 ## Docker Usage
@@ -35,7 +40,7 @@ chmod +x run.sh
 
 This will:
 - Build the Docker image
-- Run the container, mounting your `settings.json` for configuration
+- Run the container (the container will create a default `settings.json` if one is not provided)
 - Load Elering API credentials from your `.env` file
 
 
@@ -43,7 +48,7 @@ Alternatively, you can build and run manually:
 
 ```bash
 docker build -t energy-visualizer:latest .
-docker run -p 8889:8889 -v "$PWD/settings.json:/app/settings.json:ro" --env-file .env energy-visualizer
+docker run -p 8889:8889 --env-file .env energy-visualizer
 ```
 
 
