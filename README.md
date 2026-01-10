@@ -7,16 +7,10 @@ This project is a Flask server and Plotly frontend for visualizing daily energy 
 
 
 ## Quick Start (Local)
+1. Configuration
 
-1. Install dependencies:
+- You can keep a local `settings.json` for overrides. If missing, the container will create a default `/app/settings.json` at runtime. See `settings.example.json`.
 
-```bash
-python3 -m pip install -r requirements.txt
-```
-
-2. Configuration
-
-- You can keep a local `settings.json` for overrides. If missing, the container will create a default `/app/settings.json` at runtime. See `settings.example.json` for available keys (including `enable_request_logging`).
 - Copy `.env.example` to `.env` and set your Elering API credentials:
 
 ```env
@@ -24,7 +18,7 @@ AUTH_CLIENT_ID=your_client_id_here
 AUTH_CLIENT_SECRET=your_client_secret_here
 ```
 
-3. Run the server
+2. Run the server
 
 - Recommended (via helper script / Docker):
 
@@ -36,22 +30,13 @@ chmod +x scripts/run.sh
 
 `scripts/run.sh` will build the Docker image (from the project root), mount a host `settings.json` into the container if present (read-only), and pass `--env-file .env` to the container if `.env` exists.
 
+
 - Run without Docker (production with Waitress):
 
 ```bash
+python3 -m pip install -r requirements.txt
 python3 -m waitress --host=0.0.0.0 --port=8889 app:app
 ```
-
-- Development (Flask built-in server):
-
-```bash
-python3 -m flask run --host=0.0.0.0 --port=8889
-```
-
-4. Enabling request logging
-
-If you want the server to log incoming HTTP requests and responses, set `enable_request_logging` to `true` in your `settings.json` before starting the container. When enabled, request logs are written to stdout and can be viewed with `docker logs -f`.
-
 
 ## Docker Usage
 
